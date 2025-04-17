@@ -21,4 +21,3 @@ if __name__ == "__main__":
 
     # Pour l’instant, le script ne fait rien d’autre.
     sys.exit(0)
-
