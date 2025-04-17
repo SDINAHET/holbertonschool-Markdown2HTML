@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Markdown to HTML - Tasks 1 & 2: Headings and unordered lists
+Markdown to HTML - Tasks 1, 2 & 3: Headings, unordered and ordered lists
 """
 
 import sys
@@ -34,6 +34,7 @@ def main():
 
     with open(input_file, "r") as md_file, open(output_file, "w") as html_file:
         in_ul = False
+        in_ol = False
 
         for line in md_file:
             stripped = line.strip()
@@ -42,6 +43,9 @@ def main():
                 if in_ul:
                     html_file.write("</ul>\n")
                     in_ul = False
+                if in_ol:
+                    html_file.write("</ol>\n")
+                    in_ol = False
                 continue
 
             heading = convert_headings(stripped)
@@ -49,21 +53,40 @@ def main():
                 if in_ul:
                     html_file.write("</ul>\n")
                     in_ul = False
+                if in_ol:
+                    html_file.write("</ol>\n")
+                    in_ol = False
                 html_file.write(heading + '\n')
             elif stripped.startswith("- "):
+                if in_ol:
+                    html_file.write("</ol>\n")
+                    in_ol = False
                 if not in_ul:
                     html_file.write("<ul>\n")
                     in_ul = True
+                html_file.write(f"<li>{stripped[2:].strip()}</li>\n")
+            elif stripped.startswith("* "):
+                if in_ul:
+                    html_file.write("</ul>\n")
+                    in_ul = False
+                if not in_ol:
+                    html_file.write("<ol>\n")
+                    in_ol = True
                 html_file.write(f"<li>{stripped[2:].strip()}</li>\n")
             else:
                 if in_ul:
                     html_file.write("</ul>\n")
                     in_ul = False
-                # Future support for paragraphs or other types
+                if in_ol:
+                    html_file.write("</ol>\n")
+                    in_ol = False
+                # future: paragraph support
                 pass
 
         if in_ul:
             html_file.write("</ul>\n")
+        if in_ol:
+            html_file.write("</ol>\n")
 
     exit(0)
 
