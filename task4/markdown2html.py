@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """
-Markdown to HTML - Tasks 1 to 4: Headings, unordered/ordered lists, and paragraphs
+Markdown to HTML - Tasks 1 to 4: Headings, unordered/ordered lists,
+and paragraphs
 """
 
 import sys
