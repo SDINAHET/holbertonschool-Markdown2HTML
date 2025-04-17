@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 """
-Markdown to HTML - Tasks 1 to 4: Headings, unordered/ordered lists,
-and paragraphs
+Markdown to HTML - Tasks 1 to 5: Headings, lists, paragraphs, bold, emphasis
 """
 
 import sys
 import os
+import re
 
 
 def convert_headings(line):
@@ -16,8 +16,20 @@ def convert_headings(line):
             count += 1
         if 1 <= count <= 6 and len(line) > count and line[count] == ' ':
             content = line[count:].strip()
-            return f"<h{count}>{content}</h{count}>"
+            return f"<h{count}>{apply_inline_formatting(content)}</h{count}>"
     return None
+
+
+def apply_inline_formatting(text):
+    """
+    Replaces Markdown-style inline formatting with corresponding HTML:
+    **bold** -> <b>bold</b>
+    __italic__ -> <em>italic</em>
+    """
+    # Bold first to avoid conflict with __
+    text = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', text)
+    text = re.sub(r'__(.+?)__', r'<em>\1</em>', text)
+    return text
 
 
 def main():
@@ -79,7 +91,8 @@ def main():
                 if not in_ul:
                     html_file.write("<ul>\n")
                     in_ul = True
-                html_file.write(f"<li>{stripped[2:].strip()}</li>\n")
+                content = apply_inline_formatting(stripped[2:].strip())
+                html_file.write(f"<li>{content}</li>\n")
             elif stripped.startswith("* "):
                 flush_paragraph()
                 if in_ul:
@@ -88,7 +101,8 @@ def main():
                 if not in_ol:
                     html_file.write("<ol>\n")
                     in_ol = True
-                html_file.write(f"<li>{stripped[2:].strip()}</li>\n")
+                content = apply_inline_formatting(stripped[2:].strip())
+                html_file.write(f"<li>{content}</li>\n")
             else:
                 if in_ul:
                     html_file.write("</ul>\n")
@@ -96,7 +110,7 @@ def main():
                 if in_ol:
                     html_file.write("</ol>\n")
                     in_ol = False
-                paragraph_buffer.append(stripped)
+                paragraph_buffer.append(apply_inline_formatting(stripped))
 
         flush_paragraph()
         if in_ul:
